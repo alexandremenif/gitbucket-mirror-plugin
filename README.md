@@ -27,7 +27,7 @@ and place it under the *plugins* repository located in your
 
 Plugin version | GitBucket version
 :--------------|:-----------------
-1.0.x          | 4.20.x
+1.0.x -        | 4.20.x -
 
 ## Release Notes
 
