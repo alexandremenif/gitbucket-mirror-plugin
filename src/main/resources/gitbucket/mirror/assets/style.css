@@ -1,0 +1,13 @@
+table.table-mirrors {
+  margin-top: 12px;
+}
+
+table.table-mirrors td .octicon-issue-opened,
+table.table-mirrors td .octicon-git-pull-request .open {
+  color: #6CC644;
+}
+
+table.table-mirrors td .octicon-issue-closed,
+table.table-mirrors td .octicon-git-pull-request .closed{
+  color : #BD2C00;;
+}

@@ -1,0 +1,145 @@
+@(mirror: io.github.gitbucket.mirror.model.Mirror,
+  statusOption: Option[io.github.gitbucket.mirror.model.MirrorStatus],
+  repository: gitbucket.core.service.RepositoryService.RepositoryInfo
+)(implicit context: gitbucket.core.controller.Context)
+
+@import gitbucket.core.view.helpers
+
+@gitbucket.core.html.main(s"Mirrors - ${repository.owner}/${repository.name}"){
+  @gitbucket.core.html.menu("mirrors", repository){
+
+    <script src="@context.path/plugin-assets/mirror/alert-message.js"></script>
+
+    <div id="alert-container"></div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">Settings</div>
+      <div class="panel-body">
+        <form id="mirror-form">
+
+          @gitbucket.mirror.html.mirror_inputs(Some(mirror))
+
+          <button type="button" id="delete-mirror" class="btn btn-danger">Delete</button>
+          <button type="submit" id="update-mirror" class="btn btn-primary">Save</button>
+
+        </form>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">Status</div>
+      <div class="panel-body">
+
+        @statusOption match {
+          case scala.None => {
+            <p class="card-text">This mirror has never been updated.</p>
+          }
+          case scala.Some(status) if status.successful == true => {
+            <p class="card-text">
+              Mirror successfully updated
+              <strong class="font-weight-bold">@helpers.datetimeAgo(status.date)</strong>.
+            </p>
+          }
+          case scala.Some(status) if status.successful == false => {
+            <p class="card-text">
+              Mirror failed to update
+              <strong class="font-weight-bold">@helpers.datetimeAgo(status.date)</strong>.
+            </p>
+
+            <div class="alert alert-danger" role="alert">
+              <strong>Error:</strong> @status.error
+            </div>
+          }
+        }
+
+        <button
+          id="update-status"
+          class="btn btn-success"
+          data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>Updating">
+          <i class="fa fa-refresh"></i>
+          Update Now
+        </button>
+
+      </div>
+    </div>
+  }
+}
+<script>
+
+displayAlertMessage();
+
+$(function(){
+
+  $('#delete-mirror').click(function(){
+    $.ajax({
+      url: '@context.path/api/v3/repos/@repository.owner/@repository.name/mirrors/@mirror.id',
+      type: 'DELETE',
+      success: function(data, status){
+        location.href = '@helpers.url(repository)/mirrors';
+      },
+      error: function(request, status, error) {
+
+        console.log(error)
+        setAlertMessage('An error happened while deleting the mirror.', 'danger');
+        location.href = '@helpers.url(repository)/mirrors';
+
+      }
+    });
+  });
+
+  $('#mirror-form').submit(function(){
+
+    var name = $('#name').val()
+    var remoteUrl = $('#remote-url').val()
+    var enabled = $('#enabled').is(':checked')
+
+    var mirror = {
+      userName: '@repository.owner',
+      repositoryName: '@repository.name',
+      name: name,
+      remoteUrl: remoteUrl,
+      enabled: enabled
+    };
+
+    $.ajax({
+      url: '@context.path/api/v3/repos/@repository.owner/@repository.name/mirrors/@mirror.id',
+      type: 'PUT',
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify(mirror),
+      dataType: 'json',
+      success: function(data, status){
+
+        setAlertMessage('Mirror settings have been updated.', 'info');
+        location.href = '@helpers.url(repository)/mirrors/@mirror.id/edit';
+
+      },
+      error: function(request, status, error) {
+
+        setAlertMessage('An error happened while updating the mirror.', 'danger');
+        location.href = '@helpers.url(repository)/mirrors/@mirror.id/edit';
+
+      }
+    });
+
+    return false;
+  });
+
+  $('#update-status').click(function() {
+
+    $(this).button('loading');
+
+    $.ajax({
+      url: '@context.path/api/v3/repos/@repository.owner/@repository.name/mirrors/@mirror.id/status',
+      type: 'PUT',
+      contentType: 'application/json; charset=utf-8',
+      success: function(data, status){
+        location.href = '@helpers.url(repository)/mirrors/@mirror.id/edit';
+      },
+      error: function(request, status, error) {
+        setAlertMessage('An error happened while executing mirror update.', 'danger');
+        location.href = '@helpers.url(repository)/mirrors/@mirror.id/edit';
+      }
+    });
+  });
+});
+</script>

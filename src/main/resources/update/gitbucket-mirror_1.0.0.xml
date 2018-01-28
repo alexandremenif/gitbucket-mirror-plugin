@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<changeSet>
+
+    <!--================================================================================================-->
+    <!-- MIRROR -->
+    <!--================================================================================================-->
+    <createTable tableName="MIRROR">
+        <column name="ID" type="int" nullable="false" autoIncrement="true" unique="true"/>
+        <column name="USER_NAME" type="varchar(100)" nullable="false"/>
+        <column name="REPOSITORY_NAME" type="varchar(100)" nullable="false"/>
+        <column name="NAME" type="varchar(100)" nullable="false"/>
+        <column name="REMOTE_URL" type="varchar(2000)" nullable="false"/>
+        <column name="ENABLED" type="boolean" nullable="false"/>
+    </createTable>
+
+    <addPrimaryKey constraintName="IDX_MIRROR_PK" tableName="MIRROR" columnNames="ID"/>
+
+    <!--================================================================================================-->
+    <!-- MIRROR_STATUS -->
+    <!--================================================================================================-->
+    <createTable tableName="MIRROR_STATUS">
+        <column name="MIRROR_ID" type="int" nullable="false" unique="true"/>
+        <column name="DATE" type="datetime" nullable="false"/>
+        <column name="SUCCESSFUL" type="boolean" nullable="false"/>
+        <column name="ERROR" type="varchar(1000)" nullable="true" />
+    </createTable>
+
+    <addPrimaryKey constraintName="IDX_MIRROR_STATUS_PK" tableName="MIRROR_STATUS" columnNames="MIRROR_ID"/>
+    <addForeignKeyConstraint
+        baseColumnNames="MIRROR_ID"
+        baseTableName="MIRROR_STATUS"
+        constraintName="IDX_MIRROR_STATUS_FK0"
+        onDelete="CASCADE"
+        referencedColumnNames="ID"
+        referencedTableName="MIRROR"/>
+
+</changeSet>
