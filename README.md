@@ -24,3 +24,7 @@ and place it under the *plugins* repository located in your
 *GITBUCKET_HOME*.
 
 ## Release Notes
+
+### 1.0.0
+
+Initial release.
