@@ -1,4 +1,4 @@
-@(mirrorsWithUpdate: Seq[(io.github.gitbucket.mirror.model.Mirror, Option[io.github.gitbucket.mirror.model.MirrorUpdate])],
+@(mirrorsWithStatus: Seq[(io.github.gitbucket.mirror.model.Mirror, Option[io.github.gitbucket.mirror.model.MirrorStatus])],
   repository: gitbucket.core.service.RepositoryService.RepositoryInfo)(implicit context: gitbucket.core.controller.Context)
 
 @import gitbucket.core.view.helpers
@@ -20,11 +20,11 @@
     <table class="table table-bordered table-hover table-mirrors">
       <thead>
         <tr>
-          <th>@mirrorsWithUpdate.size mirrors</th>
+          <th>@mirrorsWithStatus.size mirrors</th>
         </tr>
       </thead>
       <tbody>
-        @mirrorsWithUpdate.map { case (mirror, update) =>
+        @mirrorsWithStatus.map { case (mirror, status) =>
           <tr>
             <td style="padding-top: 15px; padding-bottom: 15px;">
               <div class="col-md-6 text-left">
@@ -32,7 +32,7 @@
               </div>
               <div class="col-md-3 text-center">
                 <p>
-                  @update.map(_.date) match {
+                  @status.map(_.date) match {
                     case Some(date) => {
                       @helpers.datetimeAgo(date)
                     }
@@ -41,7 +41,7 @@
                 </p>
               </div>
               <div class="col-md-3 text-right">
-                @update.map(_.successful) match {
+                @status.map(_.successful) match {
                   case scala.Some(true) => {
                     <span class="badge bg-green">Success</span>
                   }
@@ -56,7 +56,7 @@
           </tr>
         }
 
-        <tr @if(mirrorsWithUpdate.nonEmpty) { style="display: none" }>
+        <tr @if(mirrorsWithStatus.nonEmpty) { style="display: none" }>
           <td style="padding: 20px; background-color: #eee; text-align: center;">
             No mirror to show.
             @if(true) {
