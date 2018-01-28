@@ -23,6 +23,12 @@ Download the jar file from the
 and place it under the *plugins* repository located in your
 *GITBUCKET_HOME*.
 
+## Compatibility
+
+Plugin version | GitBucket version
+:--------------|:-----------------
+1.0.x          | 4.20.x
+
 ## Release Notes
 
 ### 1.0.0
