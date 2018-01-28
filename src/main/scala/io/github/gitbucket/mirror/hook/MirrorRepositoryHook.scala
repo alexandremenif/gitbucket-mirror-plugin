@@ -11,11 +11,11 @@ import scala.concurrent.Await
 class MirrorRepositoryHook extends RepositoryHook with MirrorService {
 
   override def deleted(owner: String, repository: String)(implicit session: Session): Unit = {
-    Await.result(deleteMirrorByRepository(owner, repository), 10 seconds)
+    Await.result(deleteMirrorByRepository(owner, repository), 60 seconds)
   }
 
   override def renamed(owner: String, repository: String, newRepository: String)(implicit session: Session): Unit = {
-    Await.result(renameMirrorRepository(owner, repository, newRepository), 10 seconds)
+    Await.result(renameMirrorRepository(owner, repository, newRepository), 60 seconds)
   }
 
 }
