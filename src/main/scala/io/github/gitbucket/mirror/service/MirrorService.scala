@@ -1,18 +1,14 @@
 package io.github.gitbucket.mirror.service
 
-import java.io.File
-import java.net.{URL, URLDecoder}
+import java.net.URL
 import java.util.Date
 
-import gitbucket.core.util.Directory
 import io.github.gitbucket.mirror.model.Profile.{MirrorStatuses, Mirrors}
 import io.github.gitbucket.mirror.model.{Mirror, MirrorStatus}
-import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder
-import org.eclipse.jgit.transport.{RefSpec, UsernamePasswordCredentialsProvider}
 import org.slf4j.LoggerFactory
 import gitbucket.core.model.Profile.profile.api._
 import gitbucket.core.servlet.Database
+import io.github.gitbucket.mirror.util.Git
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -121,60 +117,30 @@ trait MirrorService {
 
   def executeMirrorUpdate(mirror: Mirror): Future[MirrorStatus] = {
 
-    val result = Try {
-
-      // Build the repository object.
-
-      val repositoryPath =
-        Directory.GitBucketHome + "/repositories/" + mirror.userName + "/" + mirror.repositoryName + ".git"
-
-      val repository = new FileRepositoryBuilder()
-        .setGitDir(new File(repositoryPath))
-        .readEnvironment()
-        .findGitDir()
-        .build()
-
-      // Extract credentials from the URL.
-
-      val userInfo = Option(new URL(mirror.remoteUrl).getUserInfo).getOrElse("").split(":")
-      val username = URLDecoder.decode(if (userInfo.nonEmpty) userInfo(0) else "", "UTF-8")
-      val password = URLDecoder.decode(if (userInfo.size > 1) userInfo(1) else "", "UTF-8")
-
-      val credentialsProvider = new UsernamePasswordCredentialsProvider(username, password)
-
-      // Push to the remote.
-
-      val git = new Git(repository)
-
-      git.push()
-        .setRemote(mirror.remoteUrl)
-        .setRefSpecs(new RefSpec("+refs/*:refs/*"))
-        .setCredentialsProvider(credentialsProvider)
-        .call()
-    }
-
-    // Convert the result to a mirror status.
-
-    val date = new Date(System.currentTimeMillis())
-
-    val onFailure = (throwable: Throwable) => {
+    def onFailure(throwable: Throwable): MirrorStatus = {
       logger.error(
         s"Error while executing mirror status for repository ${mirror.userName}/${mirror.repositoryName}: " +
           s"${throwable.getMessage}"
       )
 
-      MirrorStatus(mirror.id.get, date, successful = false, Some(throwable.getMessage))
+      MirrorStatus(mirror.id.get, new Date(System.currentTimeMillis()), successful = false, Some(throwable.getMessage))
     }
 
-    val onSuccess = (_: Any) => {
+    def onSuccess(): MirrorStatus = {
       logger.info(
         s"Mirror status has been successfully executed for repository ${mirror.userName}/${mirror.repositoryName}."
       )
 
-      MirrorStatus(mirror.id.get, date, successful = true, None)
+      MirrorStatus(mirror.id.get, new Date(System.currentTimeMillis()), successful = true, None)
     }
 
-    val status = result.fold(onFailure, onSuccess)
+    // Execute the push, get the result and convert it to a mirror status.
+
+    val status = Try(new URL(mirror.remoteUrl))
+      .flatMap { remoteUrl =>
+        Git.pushMirror(mirror.userName, mirror.repositoryName, remoteUrl)
+      }
+     .fold(onFailure, _ => onSuccess())
 
     // Save the status.
 
