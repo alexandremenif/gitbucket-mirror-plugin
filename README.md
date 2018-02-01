@@ -53,6 +53,12 @@ Plugin version | GitBucket version
 
 ## Release Notes
 
+### 1.0.1
+
+- Fix bug about deleted references not being propagated.
+- Choose a more appropriate menu icon.
+- Improve README file.
+
 ### 1.0.0
 
-Initial release.
+- Initial release.
