@@ -22,7 +22,7 @@ the visibility of his repositories among the open source community.
 
 Download the jar file from the 
 [release page](https://github.com/alexandremenif/gitbucket-mirror-plugin/releases)
-and copy it to the plugins repository of your
+and copy it under the plugins directory of your
 [Gitbucket](https://gitbucket.github.io/) instance (`$GITBUCKET_HOME/plugins`).
 
 ## Usage
@@ -35,15 +35,15 @@ automatic updates.
 For each mirror, you need to specify its remote URL. So far, only the *http* and
 *https* protocols are supported. If the repository requires authentication, you
 should provide them in the URL (for example: 
-*https://username:password@example.com/repo.git*).
+https://username:password@example.com/repo.git).
 
 Credentials are currently stored in plain text into the database, so you should
 rather use an authentication token like the ones provided by *Github*.
 
 The plugin will report the status of the last update. If the mirror has diverged
 from the original repository, it is likely that the update will fail.
-In this case, you should first solve the conflict before expecting a successful
-update.
+In this case, you should first deal with the divergence before expecting a
+successful update.
 
 ## Compatibility
 
