@@ -8,7 +8,7 @@ import io.github.gitbucket.mirror.model.{Mirror, MirrorStatus}
 import org.slf4j.LoggerFactory
 import gitbucket.core.model.Profile.profile.api._
 import gitbucket.core.servlet.Database
-import io.github.gitbucket.mirror.util.Git
+import io.github.gitbucket.mirror.util.GitUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -138,7 +138,7 @@ trait MirrorService {
 
     val status = Try(new URL(mirror.remoteUrl))
       .flatMap { remoteUrl =>
-        Git.pushMirror(mirror.userName, mirror.repositoryName, remoteUrl)
+        GitUtil.pushMirror(mirror.userName, mirror.repositoryName, remoteUrl)
       }
      .fold(onFailure, _ => onSuccess())
 

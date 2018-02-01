@@ -12,7 +12,7 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import scala.collection.JavaConverters._
 import scala.util.Try
 
-object Git {
+object GitUtil {
 
   def repository(owner: String, repositoryName: String): Try[Repository] = Try {
 
