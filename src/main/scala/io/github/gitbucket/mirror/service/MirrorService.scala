@@ -1,6 +1,6 @@
 package io.github.gitbucket.mirror.service
 
-import java.net.URL
+import java.net.URI
 import java.util.Date
 
 import io.github.gitbucket.mirror.model.Profile.{MirrorStatuses, Mirrors}
@@ -136,7 +136,7 @@ trait MirrorService {
 
     // Execute the push, get the result and convert it to a mirror status.
 
-    val status = Try(new URL(mirror.remoteUrl))
+    val status = Try(URI.create(mirror.remoteUrl))
       .flatMap { remoteUrl =>
         GitUtil.pushMirror(mirror.userName, mirror.repositoryName, remoteUrl)
       }
