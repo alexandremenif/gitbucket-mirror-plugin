@@ -5,4 +5,4 @@ scalaVersion := "2.12.3"
 gitbucketVersion := "4.20.0"
 
 libraryDependencies ++= Seq()
-scalacOptions ++= Seq("-unchecked", "-deprecation")
+scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
