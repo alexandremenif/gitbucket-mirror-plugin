@@ -1,4 +1,4 @@
-package io.github.gitbucket.mirror.util
+package io.github.gitbucket.mirror.util.git.transport
 
 import java.net.{URI, URLDecoder}
 

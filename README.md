@@ -27,18 +27,27 @@ and copy it under the plugins directory of your
 
 ## Usage
 
-When authenticated into your Gitbucket instance, you have access to a *Mirrors*
-view for each of your repositories. This view lets you create new mirrors and
-modify or delete existing ones. You can also update a mirror manually or disable
-automatic updates.
+When authenticated into your *Gitbucket* instance, you have access to a
+*Mirrors* view for each of your repositories. This view lets you create new
+mirrors and modify or delete existing ones. You can also update a mirror
+manually or disable automatic updates.
 
-For each mirror, you need to specify its remote URL. So far, only the *http* and
-*https* protocols are supported. If the repository requires authentication, you
-should provide them in the URL (for example: 
-https://username:password@example.com/repo.git).
+For each mirror, you need to specify its remote URL. So far, only the *http*,
+*https* and *ssh* protocols are expected to be supported. If the repository
+requires authentication, you should provide the credentials in the URL (for
+example: `https://username:password@example.com/repo.git`).
+
+To be able to connect to the remote using the *ssh* protocol, you are required
+to setup host keys and private keys on you machine. You can specify to the
+plugin the path to a specific host keys file with the environment variables
+`MIRROR_SSH_HOST_KEYS` (e.g. `~/.ssh/known_hosts`). You can also specify
+semi-colon separated paths to different private keys using the environment
+variable `MIRROR_SSH_PRIVATE_KEYS` (e.g. `~/.ssh/id_rsa;~/.ssh/id_rsa2`).
+Passphrase protected ssh keys are not supported.
 
 Credentials are currently stored in plain text into the database, so you should
-rather use an authentication token like the ones provided by *Github*.
+rather use an authentication token like the ones provided by *Github* when using
+*http*, or a public/private key system when using *ssh*.
 
 The plugin will report the status of the last update. If the mirror has diverged
 from the original repository, it is likely that the update will fail.

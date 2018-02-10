@@ -1,4 +1,4 @@
-package io.github.gitbucket.mirror.util
+package io.github.gitbucket.mirror.util.git.command
 
 import org.eclipse.jgit.api.{Git, TransportCommand}
 import org.eclipse.jgit.lib.{Constants, Repository}
