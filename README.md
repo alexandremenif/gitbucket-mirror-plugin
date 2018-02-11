@@ -89,6 +89,11 @@ Plugin version | GitBucket version
 
 ## Release Notes
 
+### 1.0.2
+
+- Add SSH protocol support.
+- Improve documentation in README file.
+
 ### 1.0.1
 
 - Fix bug about deleted references not being propagated.
