@@ -7,6 +7,7 @@ import profile.blockingApi._
 
 import scala.concurrent.duration._
 import scala.concurrent.Await
+import scala.language.postfixOps
 
 class MirrorRepositoryHook extends RepositoryHook with MirrorService {
 

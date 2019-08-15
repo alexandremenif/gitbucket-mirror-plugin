@@ -9,6 +9,7 @@ import org.scalatra.{Ok, _}
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import scala.language.postfixOps
 import scala.util.Try
 
 class MirrorApiController extends ControllerBase
