@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 class MirrorController extends ControllerBase
   with AccountService

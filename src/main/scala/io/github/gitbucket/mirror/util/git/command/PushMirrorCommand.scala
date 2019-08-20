@@ -4,7 +4,7 @@ import org.eclipse.jgit.api.{Git, TransportCommand}
 import org.eclipse.jgit.lib.{Constants, Repository}
 import org.eclipse.jgit.transport.RefSpec
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class PushMirrorCommand(repo: Repository) extends TransportCommand[PushMirrorCommand, Unit](repo) {
 
