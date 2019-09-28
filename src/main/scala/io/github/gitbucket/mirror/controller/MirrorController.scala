@@ -1,14 +1,11 @@
 package io.github.gitbucket.mirror.controller
 
 import gitbucket.core.controller.ControllerBase
+import gitbucket.core.model.Profile.profile.blockingApi._
 import gitbucket.core.service.{AccountService, RepositoryService}
+import gitbucket.core.servlet.Database
 import gitbucket.core.util.OwnerAuthenticator
 import io.github.gitbucket.mirror.service.MirrorService
-import org.slf4j.LoggerFactory
-
-import scala.concurrent.Await
-import scala.concurrent.duration._
-import scala.language.postfixOps
 
 class MirrorController extends ControllerBase
   with AccountService
@@ -16,37 +13,35 @@ class MirrorController extends ControllerBase
   with OwnerAuthenticator
   with RepositoryService {
 
-  private val logger = LoggerFactory.getLogger(classOf[MirrorController])
+  private val db = Database()
 
   get("/:owner/:repository/mirrors")(ownerOnly { repository =>
-
-    val mirrorsWithUpdate = Await.result(
-      findMirrorByRepositoryWithStatus(repository.owner, repository.name),
-      60 seconds
-    )
-
-    gitbucket.mirror.html.list(mirrorsWithUpdate, repository)
-
+    db.withSession { implicit session =>
+      gitbucket.mirror.html.list(
+        findMirrorsWithStatusByRepository(repository.owner, repository.name),
+        repository
+      )
+    }
   })
 
   get("/:owner/:repository/mirrors/new")(ownerOnly { repository =>
-
-    gitbucket.mirror.html.create(repository)
-
+    db.withSession { implicit session =>
+      gitbucket.mirror.html.create(repository)
+    }
   })
 
   get("/:owner/:repository/mirrors/:id/edit")(ownerOnly { repository =>
+    db.withSession { implicit session =>
+      val mirrorWithStatusOption = for {
+        mirrorId <- params.getAs[Int]("id")
+        mirrorWithStatus <- getMirrorWithStatus(mirrorId)
+      } yield mirrorWithStatus
 
-    val option = for {
-      mirrorId <- params.getAs[Int]("id")
-      mirror <- Await.result(getMirror(mirrorId), 60 seconds)
-    } yield (mirror, Await.result(getMirrorUpdate(mirrorId), 60 seconds))
-
-    option
-      .map { case (mirror, updateOption) =>
-        gitbucket.mirror.html.mirror(mirror, updateOption, repository)
-      }
-      .getOrElse(NotFound())
-
+      mirrorWithStatusOption
+        .map { case (mirror, mirrorStatus) =>
+          gitbucket.mirror.html.mirror(mirror, mirrorStatus, repository)
+        }
+        .getOrElse(NotFound())
+    }
   })
 }

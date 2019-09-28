@@ -1,15 +1,14 @@
 package io.github.gitbucket.mirror.controller
 
 import gitbucket.core.controller.ControllerBase
+import gitbucket.core.model.Profile.profile.blockingApi._
 import gitbucket.core.service.{AccountService, RepositoryService}
+import gitbucket.core.servlet.Database
 import gitbucket.core.util.OwnerAuthenticator
 import io.github.gitbucket.mirror.model.Mirror
 import io.github.gitbucket.mirror.service.MirrorService
 import org.scalatra.{Ok, _}
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
-import scala.language.postfixOps
 import scala.util.Try
 
 class MirrorApiController extends ControllerBase
@@ -18,63 +17,67 @@ class MirrorApiController extends ControllerBase
   with OwnerAuthenticator
   with RepositoryService {
 
+  private val db = Database()
+
   delete("/api/v3/repos/:owner/:repository/mirrors/:id") (ownerOnly { _ =>
 
-    val deleted = params.getAs[Int]("id").exists { mirrorId =>
-      Await.result(deleteMirror(mirrorId), 60 seconds)
+    db.withTransaction { implicit session =>
+      val deleted = params.getAs[Int]("id").exists(deleteMirror(_))
+
+      if (deleted) NoContent() else NotFound()
     }
-
-    if (deleted) NoContent() else NotFound()
-
   })
 
   get("/api/v3/repos/:owner/:repository/mirrors") (ownerOnly { repository =>
-
-    Await.result(findMirrorByRepository(repository.owner, repository.name), 60 seconds)
+    db.withSession { implicit session =>
+      findMirrorsByRepository(repository.owner, repository.name)
+    }
   })
 
-  get("/api/v3/repos/:owner/:repository/mirrors/:id") (ownerOnly { repository =>
-
-    params.getAs[Int]("id")
-      .flatMap(mirrorId => Await.result(getMirror(mirrorId), 60 seconds))
-      .map { mirror => Ok(mirror) }
-      .getOrElse(NotFound())
+  get("/api/v3/repos/:owner/:repository/mirrors/:id") (ownerOnly { _ =>
+    db.withSession { implicit session =>
+      params.getAs[Int]("id")
+        .flatMap(mirrorId => getMirror(mirrorId))
+        .map { mirror => Ok(mirror) }
+        .getOrElse(NotFound())
+    }
   })
 
   post("/api/v3/repos/:owner/:repository/mirrors") (ownerOnly { repository =>
+    db.withTransaction { implicit session =>
+      Try(parsedBody.extract[Mirror])
+        .map { body =>
+          val mirror = insertMirror(body)
+          val location = s"${context.path}/api/v3/${repository.owner}/${repository.name}/mirrors/${mirror.id.get}"
 
-    Try(parsedBody.extract[Mirror])
-      .map { body =>
-
-        val mirror = Await.result(insertMirror(body), 60 seconds)
-        val location = s"${context.path}/api/v3/${repository.owner}/${repository.name}/mirrors/${mirror.id.get}"
-
-        Created(mirror, Map("location" -> location))
-      }
-      .getOrElse(BadRequest())
-
+          Created(mirror, Map("location" -> location))
+        }
+        .getOrElse(BadRequest())
+    }
   })
 
-  put("/api/v3/repos/:owner/:repository/mirrors/:id") (ownerOnly { repository =>
+  put("/api/v3/repos/:owner/:repository/mirrors/:id") (ownerOnly { _ =>
+    db.withTransaction { implicit session =>
+      val result = for {
+        mirrorId <- params.getAs[Int]("id").toRight(NotFound())
+        body <- Try(parsedBody.extract[Mirror]).fold[Either[ActionResult, Mirror]](_ => Left(BadRequest()), Right(_))
+        mirror <- updateMirror(body.copy(id = Some(mirrorId))).toRight(NotFound())
+      } yield Ok(mirror)
 
-    val result = for {
-      mirrorId <- params.getAs[Int]("id").toRight(NotFound())
-      body <- Try(parsedBody.extract[Mirror]).fold[Either[ActionResult, Mirror]](_ => Left(BadRequest()), Right(_))
-      mirror <- Await.result(updateMirror(body.copy(id = Some(mirrorId))), 60 seconds).toRight(NotFound())
-    } yield Ok(mirror)
-
-    result.merge
+      result.merge
+    }
   })
 
-  put("/api/v3/repos/:owner/:repository/mirrors/:id/status") (ownerOnly { repository =>
+  put("/api/v3/repos/:owner/:repository/mirrors/:id/status") (ownerOnly { _ =>
+    db.withTransaction { implicit session =>
+      val status = for {
+        mirrorId <- params.getAs[Int]("id")
+        mirror <- getMirror(mirrorId)
+      } yield executeMirrorUpdate(mirror)
 
-    val status = for {
-      mirrorId <- params.getAs[Int]("id")
-      mirror <- Await.result(getMirror(mirrorId), 60 seconds)
-    } yield Await.result(executeMirrorUpdate(mirror), 60 seconds)
-
-    status
-      .map(Ok(_))
-      .getOrElse(NotFound())
+      status
+        .map(Ok(_))
+        .getOrElse(NotFound())
+    }
   })
 }

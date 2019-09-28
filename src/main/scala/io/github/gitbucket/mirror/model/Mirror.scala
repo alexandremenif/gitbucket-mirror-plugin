@@ -22,6 +22,13 @@ trait MirrorComponent { self: gitbucket.core.model.Profile =>
       remoteUrl,
       enabled
     ) <> (Mirror.tupled, Mirror.unapply)
+
+    def byId(mirrorId: Int): Rep[Boolean] = this.id === mirrorId.bind
+
+    def byId(mirrorId: Option[Int]): Rep[Option[Boolean]] = this.id === mirrorId.bind
+
+    def byRepository(owner: String, repositoryName: String): Rep[Boolean] =
+      this.userName === owner.bind && this.repositoryName === repositoryName.bind
   }
 }
 

@@ -24,6 +24,8 @@ trait MirrorStatusComponent { self: gitbucket.core.model.Profile =>
       successful,
       error
     ) <> (MirrorStatus.tupled, MirrorStatus.unapply)
+
+    def byMirrorId(mirrorId: Int): Rep[Boolean] = this.mirrorId === mirrorId.bind
   }
 }
 
