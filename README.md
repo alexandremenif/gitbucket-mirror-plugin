@@ -90,6 +90,10 @@ Plugin version | GitBucket version
 
 ## Release Notes
 
+### 1.1.1
+
+- Add a form input field for password.
+
 ### 1.1.0
 
 - Bump to GItBucket 4.32.0.
