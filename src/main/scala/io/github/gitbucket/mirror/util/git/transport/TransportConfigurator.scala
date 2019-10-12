@@ -1,36 +1,27 @@
 package io.github.gitbucket.mirror.util.git.transport
 
-import java.io.IOException
-import java.net.URI
 import org.eclipse.jgit.api.TransportCommand
+import scala.util.Try
 
-import scala.util.{Success, Try}
+import io.github.gitbucket.mirror.model.RemoteInfo
 
 
 trait TransportConfigurator[C <: TransportCommand[C, _]] {
 
   def apply(command: C): Try[C]
-
 }
 
 object TransportConfigurator {
 
-  def apply[C <: TransportCommand[C, _]](remoteUrl: URI): TransportConfigurator[C] = {
+  def apply[C <: TransportCommand[C, _]](remoteInfo: RemoteInfo): TransportConfigurator[C] = {
 
-    val scheme = remoteUrl.getScheme
-
-    scheme match {
-      case "http" | "https" =>
-        new HttpTransportConfigurator[C](remoteUrl)
+    remoteInfo.url.getScheme match {
       case "ssh" =>
-        new SshTransportConfigurator[C](remoteUrl)
+        new SshTransportConfigurator[C](remoteInfo)
       case _ =>
-        new TransportConfigurator[C] {
-          override def apply(command: C): Try[C] = Success(command)
-        }
+        new DefaultTransportConfigurator[C](remoteInfo)
     }
   }
-
 }
 
 

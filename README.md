@@ -50,10 +50,10 @@ repository. Let's assume that the new mirror is located at a URL alike
 
 Then, you can go to the *Mirrors* view of your repository on *Gitbucket* and
 click on the *New Mirror* button. Choose a name for the new mirror and enter
-its URL in the dedicated input field. If required, credentials should be
-included in the URL. For the *Github* example, you should for instance get a
-[personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/)
-and include it in the URL in the following way: `https://username:token@github.com/username/repos.git`.
+its URL in the dedicated input field. If you need credentials, you should
+provide the username in the URL, as in 
+`https://username@github.com/username/repos.git` and the password in the 
+dedicated form input located below the URL.
 
 Submit the new mirror and every push received by your repository on
 *Gitbucket* will now be propagated to the mirror on *Github*.
@@ -61,8 +61,8 @@ Submit the new mirror and every push received by your repository on
 ### SSH support
 
 It is also possible to use the SSH protocol instead of HTTP. Again, you need
-to provide the credentials in the URL to perform authentication (it is
-possible, although it is not recommended for security reasons).
+to provide the credentials in the URL to perform authentication (the password
+can also be provided in the password input field).
 
 If you are rather using a public/private key system, you can use the
 environment variable `MIRROR_SSH_PRIVATE_KEYS` to specify a semicolon
@@ -89,6 +89,10 @@ Plugin version | GitBucket version
 1.0.x -        | 4.20.x -
 
 ## Release Notes
+
+### 1.1.1
+
+- Add a form input field for password.
 
 ### 1.1.0
 
