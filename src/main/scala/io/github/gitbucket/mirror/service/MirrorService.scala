@@ -5,7 +5,7 @@ import java.net.URI
 import java.util.Date
 
 import io.github.gitbucket.mirror.model.Profile.{MirrorStatuses, Mirrors}
-import io.github.gitbucket.mirror.model.{Mirror, MirrorStatus}
+import io.github.gitbucket.mirror.model.{Mirror, MirrorStatus, RemoteInfo}
 import io.github.gitbucket.mirror.util.git._
 import io.github.gitbucket.mirror.util.git.transport._
 import gitbucket.core.model.Profile.profile.blockingApi._
@@ -14,7 +14,6 @@ import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.slf4j.LoggerFactory
-
 import scala.util.Try
 
 trait MirrorService {
@@ -93,7 +92,7 @@ trait MirrorService {
 
     def onFailure(throwable: Throwable): MirrorStatus = {
 
-      val repositoryName = s"${mirror.userName}/${mirror.repositoryName}"
+      val repositoryName = s"${mirror.username}/${mirror.repositoryName}"
       val message = s"Error while executing mirror status for repository $repositoryName: ${throwable.getMessage}"
 
       logger.error(message, throwable)
@@ -103,7 +102,7 @@ trait MirrorService {
 
     def onSuccess(): MirrorStatus = {
       logger.info(
-        s"Mirror status has been successfully executed for repository ${mirror.userName}/${mirror.repositoryName}."
+        s"Mirror status has been successfully executed for repository ${mirror.username}/${mirror.repositoryName}."
       )
 
       MirrorStatus(mirror.id.get, new Date(System.currentTimeMillis()), successful = true, None)
@@ -112,11 +111,12 @@ trait MirrorService {
     // Execute the push, get the result and convert it to a mirror status.
 
     val result = for {
-      repository <- repository(mirror.userName, mirror.repositoryName)
+      repository <- repository(mirror.username, mirror.repositoryName)
       remoteUrl <- Try(URI.create(mirror.remoteUrl))
+      remoteInfo = RemoteInfo(remoteUrl, mirror.remotePassword)
       pushMirrorCommand <- new Git(repository).pushMirror()
         .setRemote(remoteUrl.toString)
-        .configureTransport(remoteUrl)
+        .configureTransport(remoteInfo)
       _ <- Try { pushMirrorCommand.call() }
     } yield ()
 

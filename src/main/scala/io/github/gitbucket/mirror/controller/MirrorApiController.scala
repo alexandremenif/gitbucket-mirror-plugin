@@ -8,8 +8,9 @@ import gitbucket.core.util.OwnerAuthenticator
 import io.github.gitbucket.mirror.model.Mirror
 import io.github.gitbucket.mirror.service.MirrorService
 import org.scalatra.{Ok, _}
-
 import scala.util.Try
+
+import org.slf4j.LoggerFactory
 
 class MirrorApiController extends ControllerBase
   with AccountService
@@ -18,6 +19,8 @@ class MirrorApiController extends ControllerBase
   with RepositoryService {
 
   private val db = Database()
+
+  private val logger = LoggerFactory.getLogger(classOf[MirrorApiController])
 
   delete("/api/v3/repos/:owner/:repository/mirrors/:id") (ownerOnly { _ =>
 
@@ -46,13 +49,18 @@ class MirrorApiController extends ControllerBase
   post("/api/v3/repos/:owner/:repository/mirrors") (ownerOnly { repository =>
     db.withTransaction { implicit session =>
       Try(parsedBody.extract[Mirror])
-        .map { body =>
-          val mirror = insertMirror(body)
-          val location = s"${context.path}/api/v3/${repository.owner}/${repository.name}/mirrors/${mirror.id.get}"
+        .fold(
+          error => {
+            logger.error(error.getMessage)
+            BadRequest(error)
+          },
+          body => {
+            val mirror = insertMirror(body)
+            val location = s"${context.path}/api/v3/${repository.owner}/${repository.name}/mirrors/${mirror.id.get}"
 
-          Created(mirror, Map("location" -> location))
-        }
-        .getOrElse(BadRequest())
+            Created(mirror, Map("location" -> location))
+          }
+      )
     }
   })
 
@@ -60,7 +68,13 @@ class MirrorApiController extends ControllerBase
     db.withTransaction { implicit session =>
       val result = for {
         mirrorId <- params.getAs[Int]("id").toRight(NotFound())
-        body <- Try(parsedBody.extract[Mirror]).fold[Either[ActionResult, Mirror]](_ => Left(BadRequest()), Right(_))
+        body <- Try(parsedBody.extract[Mirror]).fold[Either[ActionResult, Mirror]](
+          error => {
+            logger.error(error.getMessage)
+            Left(BadRequest(error))
+          },
+          Right(_)
+        )
         mirror <- updateMirror(body.copy(id = Some(mirrorId))).toRight(NotFound())
       } yield Ok(mirror)
 

@@ -4,7 +4,7 @@
   <label for="name">Mirror Name</label>
   <input type="text"
          class="form-control"
-         style="max-width: 25em"
+         style="max-width: 50em"
          id="name"
          value="@mirror.map(_.name).getOrElse("")"
          maxlength="100"
@@ -22,6 +22,17 @@
          maxlength="2000"
          size="2000"
          required>
+</div>
+
+<div class="form-group">
+  <label for="remote-url">Password</label>
+  <input type="password"
+         class="form-control"
+         style="max-width: 50em"
+         id="remote-password"
+         value="@mirror.flatMap(_.remotePassword).orNull"
+         maxlength="2000"
+         size="2000">
 </div>
 
 <div class="form-check">
