@@ -89,16 +89,18 @@ $(function(){
 
   $('#mirror-form').submit(function(){
 
-    var name = $('#name').val()
-    var remoteUrl = $('#remote-url').val()
-    var enabled = $('#enabled').is(':checked')
+    const name = $('#name').val()
+    const remoteUrl = $('#remote-url').val()
+    const remotePassword = $('#remote-password').val()
+    const enabled = $('#enabled').is(':checked')
 
-    var mirror = {
-      userName: '@repository.owner',
+    const mirror = {
+      username: '@repository.owner',
       repositoryName: '@repository.name',
-      name: name,
-      remoteUrl: remoteUrl,
-      enabled: enabled
+      name,
+      remoteUrl,
+      remotePassword: remotePassword ? remotePassword : undefined,
+      enabled
     };
 
     $.ajax({

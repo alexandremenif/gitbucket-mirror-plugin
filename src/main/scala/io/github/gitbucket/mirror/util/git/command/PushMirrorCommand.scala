@@ -46,5 +46,4 @@ class PushMirrorCommand(repo: Repository) extends TransportCommand[PushMirrorCom
 
     pushCommand.call()
   }
-
 }

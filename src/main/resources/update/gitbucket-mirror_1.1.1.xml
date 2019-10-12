@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<changeSet>
+    <renameColumn tableName="MIRROR" oldColumnName="USER_NAME" newColumnName="USERNAME" />
+
+    <addColumn tableName="MIRROR">
+        <column name="REMOTE_PASSWORD" type="varchar(2000)" nullable="true" />
+    </addColumn>
+</changeSet>
