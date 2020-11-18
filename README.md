@@ -1,4 +1,4 @@
-# Gitbucket Mirror Plugin
+# Gitbucket Mirror Plugin [![build](https://github.com/alexandremenif/gitbucket-mirror-plugin/workflows/build/badge.svg?branch=master)](https://github.com/alexandremenif/gitbucket-mirror-plugin/actions?query=workflow%3Abuild+branch%3Amaster)
 
 This plugin adds repository mirroring to
 [Gitbucket](https://gitbucket.github.io/).
