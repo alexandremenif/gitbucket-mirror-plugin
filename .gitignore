@@ -23,3 +23,11 @@ project/plugins/project/
 # Ensime
 .ensime
 .ensime_cache/
+
+# Metals specific
+.metals
+.bloop
+**/metals.sbt
+
+# Visual Studio Code specific
+.vscode
