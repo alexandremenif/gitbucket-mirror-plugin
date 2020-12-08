@@ -1,4 +1,4 @@
-# Gitbucket Mirror Plugin
+# Gitbucket Mirror Plugin [![build](https://github.com/alexandremenif/gitbucket-mirror-plugin/workflows/build/badge.svg?branch=master)](https://github.com/alexandremenif/gitbucket-mirror-plugin/actions?query=workflow%3Abuild+branch%3Amaster)
 
 This plugin adds repository mirroring to
 [Gitbucket](https://gitbucket.github.io/).
@@ -85,10 +85,18 @@ ssh-keyscan -t ssh-rsa github.com >> ~/.ssh/known_hosts
 
 Plugin version | GitBucket version
 :--------------|:-----------------
+1.3.x -        | 4.35.x - (Not yet released)
+1.2.x -        | 4.34.x -
 1.1.x -        | 4.32.x -
 1.0.x -        | 4.20.x -
 
 ## Release Notes
+
+### 1.2.0
+
+- Bump to GitBucket 4.34.0.
+- Pull request hook support.
+- Enable GitHub Actions.
 
 ### 1.1.1
 
@@ -96,7 +104,7 @@ Plugin version | GitBucket version
 
 ### 1.1.0
 
-- Bump to GItBucket 4.32.0.
+- Bump to GitBucket 4.32.0.
 
 ### 1.0.2
 
