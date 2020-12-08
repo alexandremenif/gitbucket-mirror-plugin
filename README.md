@@ -85,10 +85,16 @@ ssh-keyscan -t ssh-rsa github.com >> ~/.ssh/known_hosts
 
 Plugin version | GitBucket version
 :--------------|:-----------------
+1.2.x -        | 4.34.x -
 1.1.x -        | 4.32.x -
 1.0.x -        | 4.20.x -
 
 ## Release Notes
+
+### 1.2.0
+
+- Bump to GitBucket 4.34.0.
+- Pull request hook support.
 
 ### 1.1.1
 
@@ -96,7 +102,7 @@ Plugin version | GitBucket version
 
 ### 1.1.0
 
-- Bump to GItBucket 4.32.0.
+- Bump to GitBucket 4.32.0.
 
 ### 1.0.2
 
