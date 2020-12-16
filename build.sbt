@@ -1,8 +1,8 @@
 name := "gitbucket-mirror-plugin"
 organization := "io.github.gitbucket"
-version := "1.2.0"
+version := "1.3.0"
 scalaVersion := "2.13.1"
-gitbucketVersion := "4.34.0"
+gitbucketVersion := "4.35.0"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 libraryDependencies ++= Seq(
