@@ -12,7 +12,8 @@ class MirrorPostReceiveHook extends ReceiveHook with MirrorService {
     repository: String,
     receivePack: ReceivePack,
     command: ReceiveCommand,
-    pusher: String
+    pusher: String,
+    mergePullRequest: Boolean
   )(implicit session: Profile.profile.api.Session): Unit =
     findMirrorsByRepository(owner, repository).foreach { mirror =>
       if (mirror.enabled) executeMirrorUpdate(mirror)

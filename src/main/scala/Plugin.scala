@@ -1,8 +1,8 @@
 import gitbucket.core.controller.Context
-import gitbucket.core.plugin.{Link, PullRequestHook, ReceiveHook, RepositoryHook}
+import gitbucket.core.plugin.{Link, ReceiveHook, RepositoryHook}
 import gitbucket.core.service.RepositoryService.RepositoryInfo
 import io.github.gitbucket.mirror.controller.{MirrorApiController, MirrorController}
-import io.github.gitbucket.mirror.hook.{MirrorPostReceiveHook, MirrorRepositoryHook, MirrorPullRequestHook}
+import io.github.gitbucket.mirror.hook.{MirrorPostReceiveHook, MirrorRepositoryHook}
 import io.github.gitbucket.solidbase.migration.LiquibaseMigration
 import io.github.gitbucket.solidbase.model.Version
 
@@ -18,6 +18,7 @@ class Plugin extends gitbucket.core.plugin.Plugin {
     new Version("1.1.0"),
     new Version("1.1.1", new LiquibaseMigration("update/gitbucket-mirror_1.1.1.xml")),
     new Version("1.2.0"),
+    new Version("1.3.0"),
   )
 
   override val assetsMappings = Seq("/mirror" -> "/gitbucket/mirror/assets")
@@ -32,5 +33,4 @@ class Plugin extends gitbucket.core.plugin.Plugin {
 
   override val receiveHooks: Seq[ReceiveHook] = Seq(new MirrorPostReceiveHook())
   override val repositoryHooks: Seq[RepositoryHook] = Seq(new MirrorRepositoryHook())
-  override val pullRequestHooks: Seq[PullRequestHook] = Seq(new MirrorPullRequestHook())
 }
