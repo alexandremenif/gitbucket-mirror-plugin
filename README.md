@@ -1,4 +1,4 @@
-# Gitbucket Mirror Plugin [![build](https://github.com/alexandremenif/gitbucket-mirror-plugin/workflows/build/badge.svg?branch=master)](https://github.com/alexandremenif/gitbucket-mirror-plugin/actions?query=workflow%3Abuild+branch%3Amaster)
+# GitBucket Mirror Plugin [![build](https://github.com/alexandremenif/gitbucket-mirror-plugin/workflows/build/badge.svg?branch=master)](https://github.com/alexandremenif/gitbucket-mirror-plugin/actions?query=workflow%3Abuild+branch%3Amaster)
 
 This plugin adds repository mirroring to
 [Gitbucket](https://gitbucket.github.io/).
@@ -14,7 +14,7 @@ of a `git push --mirror` command. Therefore, every reference (commits, tags
 and branches) pushed to a repository will be propagated to its mirrors.
 
 A typical use case occurs when a user or an organization wants to use a
-*Gitbucket* instance as the main Git repository hosting service, while keeping
+*GitBucket* instance as the main Git repository hosting service, while keeping
 read-only updated copies of the repositories on *Github*, for example to
 improve the visibility of the repositories among the open source community.
 
@@ -23,12 +23,12 @@ improve the visibility of the repositories among the open source community.
 Download the jar file from the 
 [release page](https://github.com/alexandremenif/gitbucket-mirror-plugin/releases)
 and copy it under the plugins directory of your
-[Gitbucket](https://gitbucket.github.io/) instance (`$GITBUCKET_HOME/plugins`).
+[GitBucket](https://gitbucket.github.io/) instance (`$GITBUCKET_HOME/plugins`).
 
 ## Usage
 
 The plugin adds a section entitled *Mirrors* to the side menu of every
-repository hosted on a *Gitbucket* instance. Once authenticated, repository
+repository hosted on a *GitBucket* instance. Once authenticated, repository
 owners and administrators can use this section to add new mirrors and modify
 or delete existing ones. It is also possible to update a mirror manually and 
 to disable automatic updates.
@@ -42,13 +42,13 @@ read-only in order to avoid this kind of issues.
 ### Creating a new mirror
 
 As an example, let's consider the creation of a mirror on *Github* for a
-repository hosted on *Gitbucket*.
+repository hosted on *GitBucket*.
 
 First, you must create the mirror repository on *Github* as a new empty
 repository. Let's assume that the new mirror is located at a URL alike
 `https://github.com/username/repos.git`.
 
-Then, you can go to the *Mirrors* view of your repository on *Gitbucket* and
+Then, you can go to the *Mirrors* view of your repository on *GitBucket* and
 click on the *New Mirror* button. Choose a name for the new mirror and enter
 its URL in the dedicated input field. If you need credentials, you should
 provide the username in the URL, as in 
@@ -56,7 +56,7 @@ provide the username in the URL, as in
 dedicated form input located below the URL.
 
 Submit the new mirror and every push received by your repository on
-*Gitbucket* will now be propagated to the mirror on *Github*.
+*GitBucket* will now be propagated to the mirror on *Github*.
 
 ### SSH support
 
@@ -66,7 +66,7 @@ can also be provided in the password input field).
 
 If you are rather using a public/private key system, you can use the
 environment variable `MIRROR_SSH_PRIVATE_KEYS` to specify a semicolon
-separated list of locations where *Gitbucket* will be able to find your
+separated list of locations where *GitBucket* will be able to find your
 private key (e.g. `~/private_key1;~/private_key2`). you should not need to
 set this environment variable if your private key is located at a standard
 location such as `~/.ssh/id_rsa`. Note that passphrase protected private keys
@@ -85,12 +85,16 @@ ssh-keyscan -t ssh-rsa github.com >> ~/.ssh/known_hosts
 
 Plugin version | GitBucket version
 :--------------|:-----------------
-1.3.x -        | 4.35.x - (Not yet released)
+1.3.x -        | 4.35.x -
 1.2.x -        | 4.34.x -
 1.1.x -        | 4.32.x -
 1.0.x -        | 4.20.x -
 
 ## Release Notes
+
+### 1.3.0
+
+- Support GitBucket 4.35.0.
 
 ### 1.2.0
 
