@@ -29,6 +29,7 @@ project/plugins/project/
 .bloop
 .bsp
 **/metals.sbt
+null
 
 # Visual Studio Code specific
 .vscode
