@@ -93,6 +93,10 @@ Plugin version | GitBucket version
 
 ## Release Notes
 
+### 1.4.1
+
+- Fix NullPointerException during plugin initialization.
+
 ### 1.4.0
 
 - Support GitBucket 4.37.x.
